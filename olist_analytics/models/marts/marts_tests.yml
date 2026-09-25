@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: "Core fact: one row per order with SLA and monetary measures."
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+      - name: payment_total
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+  - name: dim_customers
+    description: "Customer dimension."
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_sellers
+    description: "Seller dimension."
+    columns:
+      - name: seller_id
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_products
+    description: "Product dimension with English categories."
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
