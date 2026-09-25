@@ -1,0 +1,8 @@
+.venv/
+data/
+target/
+logs/
+dbt_packages/
+__pycache__/
+profiles.yml
+.DS_Store

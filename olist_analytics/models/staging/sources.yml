@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw Olist e-commerce data loaded as-is from Kaggle source extracts. Immutable landing zone."
+    database: OLIST_DW
+    schema: RAW
+    tables:
+      - name: raw_orders
+        description: "One row per order. Contains status lifecycle timestamps."
+      - name: raw_order_items
+        description: "One row per item per order. Contains price and freight."
+      - name: raw_order_payments
+        description: "One row per payment per order. Orders may have MULTIPLE rows (installments/split payments)."
+      - name: raw_order_reviews
+        description: "One row per review. Review scores 1-5."
+      - name: raw_products
+        description: "Product master. Known issues: zero weights, null categories."
+      - name: raw_customers
+        description: "One row per customer. Contains geolocation state/zip."
+      - name: raw_sellers
+        description: "One row per seller with location."
+      - name: raw_category_translation
+        description: "Portuguese-to-English category lookup. Originally ingested with header-as-data defect; re-ingested correctly. 71 rows expected."

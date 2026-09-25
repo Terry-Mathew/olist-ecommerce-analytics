@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Cleaned order lifecycle. One row per order."
+    columns:
+      - name: order_id
+        description: "Primary key. Must be unique and never null."
+        tests:
+          - unique
+          - not_null
+      - name: order_status
+        description: "Order lifecycle stage."
+        tests:
+          - accepted_values:
+              values: ['created', 'approved', 'invoiced', 'processing',
+                       'shipped', 'delivered', 'canceled', 'unavailable']
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+
+  - name: stg_customers
+    description: "One row per customer."
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_products
+    description: "Product master. Zero weights and null categories are KNOWN issues, documented, not tested."
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_order_items
+    description: "One row per item per order."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('stg_products')
+              field: product_id
+      - name: seller_id
+        tests:
+          - relationships:
+              to: ref('stg_sellers')
+              field: seller_id
+      - name: price
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+  - name: stg_sellers
+    description: "One row per seller."
+    columns:
+      - name: seller_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_category_translation
+    description: "Category lookup. 71 rows expected after re-ingestion fix."
+    columns:
+      - name: product_category_name
+        tests:
+          - unique
+          - not_null
